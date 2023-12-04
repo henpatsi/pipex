@@ -18,14 +18,16 @@ SOURCES = pipex.c
 
 OBJECTS = $(SOURCES:.c=.o)
 
-CFLAGS += -Wall -Wextra -Werror
+INCLUDES_DIR = ./
+
+CFLAGS += -Wall -Wextra -Werror -I $(INCLUDES_DIR)
 
 all: $(NAME)
 
-$(NAME): $(LIBFT) $(OBJECTS)
-	cc $(CFLAGS) $(LIBFT) $(OBJECTS) -o pipex
+$(NAME): $(OBJECTS) $(LIBFT)
+	cc $(CFLAGS) $(OBJECTS) $(LIBFT) -o pipex
 
-$(OBJECTS): $(SOURaCES)
+$(OBJECTS): $(SOURCES)
 
 $(LIBFT):
 	make -C ./libft/
@@ -39,3 +41,20 @@ fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
+
+TEST_DIR = ./test_files/
+
+test:
+	< $(TEST_DIR)infile1 cat | wc -l > $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
+	@echo ""
+	./$(NAME) $(TEST_DIR)infile1 "cat" "wc -l" $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
+	@echo ""
+
+	< $(TEST_DIR)infile_noread cat | wc -l > $(TEST_DIR)outfile1
+#	< $(TEST_DIR)infile1 cat | wc -l > $(TEST_DIR)outfile_nowrite
+	@echo ""
+
+	./$(NAME) $(TEST_DIR)infile_noread "cat" "wc -l" $(TEST_DIR)outfile1
+	./$(NAME) $(TEST_DIR)infile1 "cat" "wc -l" $(TEST_DIR)outfile_nowrite

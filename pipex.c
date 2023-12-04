@@ -76,25 +76,26 @@ int	run_command(char *command_str, char *infile)
 
 int	main(int argc, char **argv)
 {
-	int infile_access;
+	int	infile_fd;
+	int	outfile_fd;
 
 	if (argc < 5)
 	{
 		ft_printf("Not enough arguments\n");
 		return (0);
 	}
-	infile_access = access(argv[1], R_OK);
-	if (infile_access == -1)
+	infile_fd = open(argv[1], O_RDONLY);
+	if (infile_fd == -1)
 	{
 		perror("Error opening infile");
 		return (0);
 	}
-	// outfile_fd = open(argv[argc - 1], O_CREAT, O_RDWR);
-	// if (outfile_fd == -1)
-	// {
-	// 	perror("Error opening outfile");
-	// 	return (0);
-	// }
+	outfile_fd = open(argv[argc - 1], O_CREAT, O_RDWR);
+	if (outfile_fd == -1)
+	{
+		perror("Error opening outfile");
+		return (0);
+	}
 
 	run_command(argv[2], argv[1]);
 }

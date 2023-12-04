@@ -1,0 +1,28 @@
+perror
+	- takes custom message argument
+	- prints custom message + error message based on errno
+	- no return
+
+strerror
+	- takes errnum argument
+	- returns string describing given errnum
+
+access
+	- takes filename and mode (R_OK, W_OK, X_OK)
+	- returns 0 if access permitted, otherwise -1 and sets errno
+
+dup
+	- creates a copy of a fd
+
+dup2
+	- dup but allows specification of fd number
+
+execve
+	- executes program given as pathname
+	- replaces current program
+	- takes argv, 0 is filename, argc is 0
+	- envp ? null ?
+
+execve, exit, fork, pipe,
+unlink, wait, waitpid
+
