@@ -6,7 +6,7 @@
 #    By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 08:46:34 by hpatsi            #+#    #+#              #
-#    Updated: 2023/12/04 10:55:27 by hpatsi           ###   ########.fr        #
+#    Updated: 2023/12/05 13:31:59 by hpatsi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = pipex
 
 LIBFT = ./libft/libft.a
 
-SOURCES = pipex.c
+SOURCES = pipex.c str_utils.c check_args.c
 
 OBJECTS = $(SOURCES:.c=.o)
 
@@ -42,19 +42,42 @@ fclean: clean
 
 re: fclean all
 
+debug: clean $(OBJECTS) $(LIBFT)
+	cc $(CFLAGS) -g $(SOURCES) $(LIBFT) -o pipex
+
 TEST_DIR = ./test_files/
 
-test:
+test: $(NAME)
+	@echo "\n--- VALID ALL ---"
 	< $(TEST_DIR)infile1 cat | wc -l > $(TEST_DIR)outfile1
-	cat $(TEST_DIR)outfile1
 	@echo ""
 	./$(NAME) $(TEST_DIR)infile1 "cat" "wc -l" $(TEST_DIR)outfile1
-	cat $(TEST_DIR)outfile1
 	@echo ""
 
+	@echo "\n--- INVALID COMMAND ---"
+	< $(TEST_DIR)infile1 nocommand | wc -l > $(TEST_DIR)outfile1
+	@echo ""
+	./$(NAME) $(TEST_DIR)infile1 "nocommand" "wc -l" $(TEST_DIR)outfile1
+	@echo ""
+
+	< $(TEST_DIR)infile1 cat | nocommand > $(TEST_DIR)outfile1
+	@echo ""
+	./$(NAME) $(TEST_DIR)infile1 "cat" "nocommand" $(TEST_DIR)outfile1
+	@echo ""
+	
+	< $(TEST_DIR)infile1 nocommand | nocommand > $(TEST_DIR)outfile1
+	@echo ""
+	./$(NAME) $(TEST_DIR)infile1 "nocommand" "nocommand" $(TEST_DIR)outfile1
+	@echo ""
+
+	@echo "\n--- INVALID INPUT ---"
 	< $(TEST_DIR)infile_noread cat | wc -l > $(TEST_DIR)outfile1
-#	< $(TEST_DIR)infile1 cat | wc -l > $(TEST_DIR)outfile_nowrite
+	@echo ""
+	./$(NAME) $(TEST_DIR)infile_noread "cat" "wc -l" $(TEST_DIR)outfile1
 	@echo ""
 
-	./$(NAME) $(TEST_DIR)infile_noread "cat" "wc -l" $(TEST_DIR)outfile1
+	@echo "\n--- INVALID OUTPUT ---"
 	./$(NAME) $(TEST_DIR)infile1 "cat" "wc -l" $(TEST_DIR)outfile_nowrite
+	@echo ""
+	< $(TEST_DIR)infile1 cat | wc -l > $(TEST_DIR)outfile_nowrite
+	@echo ""

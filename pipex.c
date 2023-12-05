@@ -6,96 +6,119 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 08:51:47 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/04 10:51:34 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/05 15:55:34 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 #include "libft.h"
 
-int free_strs(char **strs)
+void	print_strs(char **strs)
 {
 	int i;
 
 	i = 0;
 	while (strs[i] != 0)
 	{
-		free(strs[i]);
+		ft_printf("%s, ", strs[i]);
 		i++;
 	}
-	free(strs);
-	return (0);
 }
 
-char	**add_to_strs(char **strs, char *str)
+int	run_command_path(char **argv, char *path)
 {
-	char **new_strs;
-	int i;
+	char	*command;
 
-	i = 0;
-	while (strs[i] != 0)
-		i++;
-	new_strs = malloc((i + 1) * sizeof(char *));
-	if (new_strs == 0)
+	command = ft_strjoin(path, argv[0]);
+	if (command == NULL)
 		return (0);
-	i = 0;
-	while (strs[i] != 0)
+	if (execve(command, argv, NULL) == -1)
 	{
-		new_strs[i] = strs[i];
-		i++;
+		free(command);
+		return (-1);
 	}
-	free(strs);
-	new_strs[i] = str;
-	i++;
-	new_strs[i] = 0;
-	return (new_strs);
-}
-
-int	run_command(char *command_str, char *infile)
-{
-	static char **argv;
-	static char *command;
-
-	argv = ft_split(command_str, ' ');
-	if (argv == 0)
-		return (0);
-	if (infile != 0)
-	{
-		argv = add_to_strs(argv, infile);
-		if (argv == 0)
-			return (0);
-	}
-	command = ft_strjoin("/bin/", argv[0]);
-	if (command == 0)
-		return (free_strs(argv));
-	execve(command, argv, NULL);
 	free(command);
-	free_strs(argv);
+	return (1);
+}
+
+int	run_first_command(char *command, char *infile)
+{
+	char	**argv;
+
+	argv = ft_split(command, ' ');
+	if (argv == NULL)
+		return (0);
+	argv = ft_strsadd(argv, infile);
+	if (argv == NULL)
+		return (0);
+	print_strs(argv);
+	if (run_command_path(argv, "/bin/") == -1
+		&& run_command_path(argv, "/usr/bin/") == -1)
+		perror("error running command");
+	ft_strsfree(argv);
+	return (1);
+}
+
+int	run_command(char *command)
+{
+	char	**argv;
+
+	argv = ft_split(command, ' ');
+	if (argv == NULL)
+		return (0);
+	print_strs(argv);
+	if (argv == NULL)
+		return (0);
+	if (run_command_path(argv, "/bin/") == -1
+		&& run_command_path(argv, "/usr/bin/") == -1)
+		perror("error running command");
+	ft_strsfree(argv);
 	return (1);
 }
 
 int	main(int argc, char **argv)
 {
-	int	infile_fd;
-	int	outfile_fd;
+	int		pipe_fds[2];
+	pid_t	process_id;
+	int		outfile_fd;
 
-	if (argc < 5)
-	{
-		ft_printf("Not enough arguments\n");
-		return (0);
-	}
-	infile_fd = open(argv[1], O_RDONLY);
-	if (infile_fd == -1)
-	{
-		perror("Error opening infile");
-		return (0);
-	}
-	outfile_fd = open(argv[argc - 1], O_CREAT, O_RDWR);
+	if (check_arguments(argc, argv) == -1)
+		exit (1);
+	outfile_fd = open(argv[4], O_RDWR | O_CREAT, 0666);
 	if (outfile_fd == -1)
 	{
-		perror("Error opening outfile");
+		perror("error with outfile");
 		return (0);
 	}
 
-	run_command(argv[2], argv[1]);
+	if (pipe(pipe_fds) < 0)
+	{
+		perror("pipe failed");
+		return (0);
+	}
+
+	process_id = fork();
+	if (process_id < 0)
+	{
+		perror("fork failed");
+		return (0);
+	}
+	if (process_id == 0) // child process
+	{
+		close(pipe_fds[0]); // does not need pipe read end
+		dup2(pipe_fds[1], 1); // change fd 1 from stdout to pipe write
+		//ft_printf("child running command: %s\n", argv[2]);
+		run_first_command(argv[2], argv[1]);
+	}
+	if (process_id > 0) // parent process
+	{
+		close(pipe_fds[1]); // does not need pipe write end
+		dup2(pipe_fds[0], 0); // change fd 0 from stdin to pipe read
+		dup2(outfile_fd, 1); // change fd 1 from stdout to outfile
+		wait(NULL);
+		//ft_printf("parent running command: %s\n", argv[3]);
+		run_command(argv[3]);
+	}
+	
+	return (0);
 }

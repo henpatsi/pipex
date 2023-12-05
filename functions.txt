@@ -16,13 +16,31 @@ dup
 
 dup2
 	- dup but allows specification of fd number
+	- can replace other fd, e.g. stdin or stdout with your own fd
 
 execve
 	- executes program given as pathname
-	- replaces current program
-	- takes argv, 0 is filename, argc is 0
+	- replaces current program (DOES NOT RETURN)
+	- newly initialized stack and heap
+	- takes argv, argv[0] is filename, argv[argc] is 0
 	- envp ? null ?
 
-execve, exit, fork, pipe,
-unlink, wait, waitpid
+fork
+	- creates child process of current process
+	- both processes execute simultaneously
+	- child process uses same open files
+	- returns neg on fail, 0 to child, new process ID to parent
+
+pipe
+	- a connection between two processes
+	- standard output from one process becomes the standard input of the other process
+	- one process write to the pipe, and the other process reads from the pipe
+	- pipe can be used by the creating process, as well as all its child processes
+	- if a process tries to read before something is written to the pipe,
+	  the process is suspended until something is written
+
+wait
+	- parent process waits until child process exits
+
+unlink, waitpid
 
