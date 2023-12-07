@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 09:22:06 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/05 13:31:41 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/07 09:12:26 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,5 @@
 
 int		check_arguments(int argc, char **argv);
 int		ft_strsfree(char **strs);
-char	**ft_strsadd(char **strs, char *str);
 
 #endif

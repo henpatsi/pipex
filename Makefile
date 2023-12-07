@@ -6,7 +6,7 @@
 #    By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 08:46:34 by hpatsi            #+#    #+#              #
-#    Updated: 2023/12/05 13:31:59 by hpatsi           ###   ########.fr        #
+#    Updated: 2023/12/07 09:30:16 by hpatsi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = pipex
 
 LIBFT = ./libft/libft.a
 
-SOURCES = pipex.c str_utils.c check_args.c
+SOURCES = pipex.c
 
 OBJECTS = $(SOURCES:.c=.o)
 
@@ -49,9 +49,18 @@ TEST_DIR = ./test_files/
 
 test: $(NAME)
 	@echo "\n--- VALID ALL ---"
-	< $(TEST_DIR)infile1 cat | wc -l > $(TEST_DIR)outfile1
+	< $(TEST_DIR)infile1 wc | grep 3 > $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
 	@echo ""
-	./$(NAME) $(TEST_DIR)infile1 "cat" "wc -l" $(TEST_DIR)outfile1
+	./$(NAME) $(TEST_DIR)infile1 "wc" "grep 3" $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
+	@echo ""
+
+	< $(TEST_DIR)infile1 grep 3 | wc > $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
+	@echo ""
+	./$(NAME) $(TEST_DIR)infile1 "grep 3" "wc" $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
 	@echo ""
 
 	@echo "\n--- INVALID COMMAND ---"
@@ -60,15 +69,15 @@ test: $(NAME)
 	./$(NAME) $(TEST_DIR)infile1 "nocommand" "wc -l" $(TEST_DIR)outfile1
 	@echo ""
 
-	< $(TEST_DIR)infile1 cat | nocommand > $(TEST_DIR)outfile1
-	@echo ""
-	./$(NAME) $(TEST_DIR)infile1 "cat" "nocommand" $(TEST_DIR)outfile1
-	@echo ""
+#	< $(TEST_DIR)infile1 cat | nocommand > $(TEST_DIR)outfile1
+#	@echo ""
+#	./$(NAME) $(TEST_DIR)infile1 "cat" "nocommand" $(TEST_DIR)outfile1
+#	@echo ""
 	
-	< $(TEST_DIR)infile1 nocommand | nocommand > $(TEST_DIR)outfile1
-	@echo ""
-	./$(NAME) $(TEST_DIR)infile1 "nocommand" "nocommand" $(TEST_DIR)outfile1
-	@echo ""
+#	< $(TEST_DIR)infile1 nocommand | nocommand > $(TEST_DIR)outfile1
+#	@echo ""
+#	./$(NAME) $(TEST_DIR)infile1 "nocommand" "nocommand" $(TEST_DIR)outfile1
+#	@echo ""
 
 	@echo "\n--- INVALID INPUT ---"
 	< $(TEST_DIR)infile_noread cat | wc -l > $(TEST_DIR)outfile1
@@ -77,7 +86,7 @@ test: $(NAME)
 	@echo ""
 
 	@echo "\n--- INVALID OUTPUT ---"
+#	< $(TEST_DIR)infile1 cat | wc -l > $(TEST_DIR)outfile_nowrite
+#	@echo ""
 	./$(NAME) $(TEST_DIR)infile1 "cat" "wc -l" $(TEST_DIR)outfile_nowrite
-	@echo ""
-	< $(TEST_DIR)infile1 cat | wc -l > $(TEST_DIR)outfile_nowrite
 	@echo ""
