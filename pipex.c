@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 08:51:47 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/12 14:01:53 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/12 14:04:30 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,8 @@ int	main(int argc, char **argv)
 				if (dup2(file_fds[1], 1) == -1)
 					perror("dup failed");
 			}
-			run_command(argv[command_i]);
+			if (run_command(argv[command_i]) == -1)
+				break;
 		}
 		command_i++;
 	}

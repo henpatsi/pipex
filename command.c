@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 11:37:03 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/12 14:02:15 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/12 14:03:52 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ int	run_command(char *command)
 	{
 		ft_putstr_fd(argv[0], 2);
 		ft_putstr_fd(": command not found", 2);
+		return (-1);
 	}
 	ft_strsfree(argv);
 	return (1);
