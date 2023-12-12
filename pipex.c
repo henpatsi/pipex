@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 08:51:47 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/07 16:13:31 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/12 14:01:53 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,32 +36,6 @@ int	set_files(int argc, char **argv, int *file_fds)
 	return (1);
 }
 
-// int	set_in_out(int in_fd, int out_fd)
-// {
-// 	if (dup2(in_fd, 0) == -1)
-// 		return (-1);
-// 	if (dup2(out_fd, 1) == -1)
-// 		return (-1);
-// 	return (1);
-// }
-
-// void	handle_forks(int process_id, int *file_fds, int *pipe_fds, char *command)
-// {
-// 	if (process_id == 0) // child process
-// 	{
-// 		close(pipe_fds[0]); // does not need pipe read end
-// 		set_in_out(file_fds[0], pipe_fds[1]);
-// 		run_command("grep 3");
-// 	}
-// 	if (process_id > 0) // parent process
-// 	{
-// 		close(pipe_fds[1]); // does not need pipe write end
-// 		wait(NULL);
-// 		set_in_out(pipe_fds[0], file_fds[1]);
-// 		run_command("wc");
-// 	}
-// }
-
 int	main(int argc, char **argv)
 {
 	int		file_fds[2];
@@ -87,61 +61,36 @@ int	main(int argc, char **argv)
 	command_i = 2;
 	while (command_i < argc - 1)
 	{
-		if (command_i == 2) // first command
-		{
-			ft_putstr_fd("\n-----First command\n", 2);
-			// close(pipe_fds[0]);
-			dup2(file_fds[0], 0);
-			dup2(pipe_fds[1], 1);
-			// set_in_out(file_fds[0], pipe_fds[1]);
-		}
-		else if (command_i == argc - 2) // last command
-		{
-			ft_putstr_fd("\n-----Last command\n", 2);
-			close(pipe_fds[1]);
-			dup2(pipe_fds[0], 0);
-			dup2(file_fds[1], 1);
-			// set_in_out(pipe_fds[0], file_fds[1]);
-		}
-		else
-		{
-			ft_putstr_fd("\n-----Middle command\n", 2); // TODO CLOSE PIPE END FOR READING, OPEN AGAIN WHEN WRITING
-			dup2(pipe_fds[0], 0);
-			dup2(pipe_fds[1], 1);
-			// set_in_out(pipe_fds[0], pipe_fds[1]);
-		}
-
 		process_id = fork();
-		ft_putstr_fd("\nprocess created: ", 2);
-		ft_putnbr_fd(process_id, 2);
-		ft_putstr_fd("\n", 2);
 
 		if (process_id < 0)
 		{
 			perror("fork failed");
 			return (0);
 		}
-		else if (process_id > 0) // parent process
+		else if (process_id > 0)
 		{
-			ft_putstr_fd("closing pipe on parent\n", 2);
-			ft_putstr_fd("\nwaiting for child\ncommand_i = ", 2);
-			ft_putnbr_fd(command_i, 2);
-			ft_putstr_fd("\n", 2);
-
-			waitpid(process_id, NULL, 0);
-			
-			ft_putstr_fd("\nchild finished\n", 2);
+			close(pipe_fds[1]);
+			wait(0);
 		}
-		else if (process_id == 0) // child process
+		else if (process_id == 0)
 		{
-			ft_putstr_fd("\nchild running\ncommand_i = ", 2);
-			ft_putnbr_fd(command_i, 2);
-			ft_putstr_fd("\nargc = ", 2);
-			ft_putnbr_fd(argc, 2);
-			ft_putstr_fd("\nargv[command] = ", 2);
-			ft_putstr_fd(argv[command_i], 2);
-			ft_putstr_fd("\n", 2);
-
+			if (command_i == 2)
+			{
+				close(pipe_fds[0]);
+				if (dup2(file_fds[0], 0) == -1)
+					perror("dup failed");
+				if (dup2(pipe_fds[1], 1) == -1)
+					perror("dup failed");
+			}
+			else if (command_i == argc - 2)
+			{
+				close(pipe_fds[1]);
+				if (dup2(pipe_fds[0], 0) == -1)
+					perror("dup failed");
+				if (dup2(file_fds[1], 1) == -1)
+					perror("dup failed");
+			}
 			run_command(argv[command_i]);
 		}
 		command_i++;

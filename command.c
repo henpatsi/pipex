@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 11:37:03 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/07 15:57:21 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/12 14:02:15 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,8 @@ int	run_command_path(char **argv, char *path)
 	command = ft_strjoin(path, argv[0]);
 	if (command == NULL)
 		return (0);
-	ft_putstr_fd("\ntrying command: ", 2);
-	ft_putstr_fd(command, 2);
-	ft_putstr_fd("\n", 2);
 	if (execve(command, argv, NULL) == -1)
 	{
-		ft_putstr_fd("failed\n", 2);
 		free(command);
 		return (-1);
 	}
