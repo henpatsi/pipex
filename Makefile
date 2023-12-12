@@ -6,7 +6,7 @@
 #    By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 08:46:34 by hpatsi            #+#    #+#              #
-#    Updated: 2023/12/07 12:03:55 by hpatsi           ###   ########.fr        #
+#    Updated: 2023/12/12 14:39:25 by hpatsi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,6 +51,7 @@ test: $(NAME)
 	@echo "\n\n--- VALID ALL ---\n"
 	< $(TEST_DIR)infile1 wc | grep 3 > $(TEST_DIR)outfile1
 	cat $(TEST_DIR)outfile1
+	rm $(TEST_DIR)outfile1
 	@echo ""
 	./$(NAME) $(TEST_DIR)infile1 "wc" "grep 3" $(TEST_DIR)outfile1
 	cat $(TEST_DIR)outfile1
@@ -58,6 +59,7 @@ test: $(NAME)
 
 	< $(TEST_DIR)infile1 grep 3 | wc > $(TEST_DIR)outfile1
 	cat $(TEST_DIR)outfile1
+	rm $(TEST_DIR)outfile1
 	@echo ""
 	./$(NAME) $(TEST_DIR)infile1 "grep 3" "wc" $(TEST_DIR)outfile1
 	cat $(TEST_DIR)outfile1

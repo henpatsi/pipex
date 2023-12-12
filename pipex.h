@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 09:22:06 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/07 15:57:26 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/12 14:41:57 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,6 @@
 # include <string.h>
 # include <unistd.h>
 
-int	run_command(char *command);
+int	run_command(int input_fd, int output_fd, char *command);
 
 #endif
