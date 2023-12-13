@@ -6,7 +6,7 @@
 #    By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 08:46:34 by hpatsi            #+#    #+#              #
-#    Updated: 2023/12/12 14:39:25 by hpatsi           ###   ########.fr        #
+#    Updated: 2023/12/13 11:52:21 by hpatsi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = pipex
 
 LIBFT = ./libft/libft.a
 
-SOURCES = pipex.c command.c
+SOURCES = pipex.c piping.c commands.c
 
 OBJECTS = $(SOURCES:.c=.o)
 
@@ -51,18 +51,21 @@ test: $(NAME)
 	@echo "\n\n--- VALID ALL ---\n"
 	< $(TEST_DIR)infile1 wc | grep 3 > $(TEST_DIR)outfile1
 	cat $(TEST_DIR)outfile1
-	rm $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
 	@echo ""
+
 	./$(NAME) $(TEST_DIR)infile1 "wc" "grep 3" $(TEST_DIR)outfile1
 	cat $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
 	@echo ""
 
 	< $(TEST_DIR)infile1 grep 3 | wc > $(TEST_DIR)outfile1
 	cat $(TEST_DIR)outfile1
-	rm $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
 	@echo ""
 	./$(NAME) $(TEST_DIR)infile1 "grep 3" "wc" $(TEST_DIR)outfile1
 	cat $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
 	@echo ""
 
 	@echo "\n\n--- INVALID COMMAND ---\n"
@@ -95,4 +98,18 @@ test: $(NAME)
 
 	@echo "\n\n--- NOT ENOUGH ARGS ---\n"
 	./$(NAME) $(TEST_DIR)infile1 "cat" $(TEST_DIR)outfile_nowrite
+	@echo ""
+
+test_bonus: $(NAME)
+	@echo "\n\n--- VALID ALL ---\n"
+	< $(TEST_DIR)infile1 grep 3 | wc | wc | tr -d 3 > $(TEST_DIR)outfile1
+	@echo ""
+	cat $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
+	@echo ""
+
+	./pipex $(TEST_DIR)infile1 "grep 3" "wc" "wc" "tr -d 3" $(TEST_DIR)outfile1
+	@echo ""
+	cat $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
 	@echo ""

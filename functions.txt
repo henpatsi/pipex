@@ -44,3 +44,14 @@ wait
 
 unlink, waitpid
 
+functions used:
+
+open
+close
+perror
+wait
+pipe
+fork
+free
+malloc
+dup2
