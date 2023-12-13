@@ -19,6 +19,7 @@
 
 # include "libft.h"
 
+int		check_commands(int argc, char **argv);
 void	pipe_commands(int argc, char **argv, int *file_fds);
 int		run_command(int input_fd, int output_fd, char *command);
 

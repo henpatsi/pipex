@@ -54,14 +54,8 @@ int	run_command(int input_fd, int output_fd, char *command)
 	argv = ft_split(command, ' ');
 	if (argv == NULL)
 		return (0);
-	if (run_command_path(argv, "/bin/") == -1
-		&& run_command_path(argv, "/usr/bin/") == -1)
-	{
-		ft_putstr_fd(argv[0], 2);
-		ft_putstr_fd(": command not found\n", 2);
-		ft_strsfree(argv);
-		return (-1);
-	}
+	if (run_command_path(argv, "/bin/") == -1)
+		run_command_path(argv, "/usr/bin/");
 	ft_strsfree(argv);
 	return (1);
 }

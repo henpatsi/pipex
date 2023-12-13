@@ -14,7 +14,7 @@ NAME = pipex
 
 LIBFT = ./libft/libft.a
 
-SOURCES = pipex.c piping.c commands.c
+SOURCES = pipex.c check_input.c piping.c commands.c
 
 OBJECTS = $(SOURCES:.c=.o)
 
@@ -86,8 +86,8 @@ test: $(NAME)
 	@echo ""
 
 	./$(NAME) $(TEST_DIR)infile1 "nocommand" "wc" $(TEST_DIR)outfile1
-	cat $(TEST_DIR)outfile1
-	@rm $(TEST_DIR)outfile1
+#	cat $(TEST_DIR)outfile1
+#	@rm $(TEST_DIR)outfile1
 	@echo ""
 
 	@printf ${LGREEN}"\n\n- Second Command -\n"${NC}
@@ -97,8 +97,8 @@ test: $(NAME)
 #	@echo ""
 
 	./$(NAME) $(TEST_DIR)infile1 "wc" "nocommand" $(TEST_DIR)outfile1
-	cat $(TEST_DIR)outfile1
-	@rm $(TEST_DIR)outfile1
+#	cat $(TEST_DIR)outfile1
+#	@rm $(TEST_DIR)outfile1
 	@echo ""
 	
 	@printf ${LGREEN}"\n\n- Both Commands -\n"${NC}
@@ -108,8 +108,8 @@ test: $(NAME)
 #	@echo ""
 
 	./$(NAME) $(TEST_DIR)infile1 "nocommand" "nocommand" $(TEST_DIR)outfile1
-	cat $(TEST_DIR)outfile1
-	@rm $(TEST_DIR)outfile1
+#	cat $(TEST_DIR)outfile1
+#	@rm $(TEST_DIR)outfile1
 	@echo ""
 
 	@printf ${LGREEN}"\n\n- Invalid Command Args -\n"${NC}
