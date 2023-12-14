@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   str_utils.c                                        :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 16:17:11 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/14 14:11:21 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/14 15:02:44 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,25 +39,3 @@ int	free_commands(char ***commands)
 	free(commands);
 	return (0);
 }
-
-// char	*get_first_word(char *str)
-// {
-// 	char	*word;
-// 	int		i;
-
-// 	while (*str != 0 && ft_isspace(*str))
-// 		str++;
-// 	i = 0;
-// 	while (str[i] != 0 && !ft_isspace(str[i]))
-// 		i++;
-// 	word = ft_calloc(i + 1, 1);
-// 	if (word == NULL)
-// 		return (NULL);
-// 	i = 0;
-// 	while (str[i] != 0 && !ft_isspace(str[i]))
-// 	{
-// 		word[i] = str[i];
-// 		i++;
-// 	}
-// 	return (word);
-// }

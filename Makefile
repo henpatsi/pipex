@@ -6,7 +6,7 @@
 #    By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 08:46:34 by hpatsi            #+#    #+#              #
-#    Updated: 2023/12/14 14:18:51 by hpatsi           ###   ########.fr        #
+#    Updated: 2023/12/14 14:59:23 by hpatsi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,9 +14,13 @@ NAME = pipex
 
 LIBFT = ./libft/libft.a
 
-SOURCES = pipex.c handle_input.c piping.c str_utils.c
+SOURCES = pipex.c handle_input.c piping.c free.c
+
+BONUS_SOURCES = pipex_bonus.c handle_input_bonus.c piping_bonus.c str_utils_bonus.c
 
 OBJECTS = $(SOURCES:.c=.o)
+
+BONUS_OBJECTS = $(BONUS_SOURCES:.c=.o)
 
 INCLUDES_DIR = ./
 
@@ -31,6 +35,8 @@ $(OBJECTS): $(SOURCES)
 
 $(LIBFT):
 	make -C ./libft/
+
+bonus: all
 
 clean:
 	make clean -C ./libft/

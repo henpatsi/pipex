@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 11:23:00 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/14 14:16:41 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/14 15:02:42 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,8 +98,7 @@ void	pipe_commands(int *file_fds, char ***commands)
 		return ;
 	}
 	i = 0;
-	if (file_to_pipe(file_fds, pipe_fds, commands[i]) == -1)
-		return ;
+	file_to_pipe(file_fds, pipe_fds, commands[i]);
 	i++;
 	while (commands[i + 1] != 0)
 	{
