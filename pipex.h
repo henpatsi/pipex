@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 09:22:06 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/13 11:55:46 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/14 14:13:16 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,16 @@
 # include <stdio.h>
 # include <fcntl.h>
 # include <sys/wait.h> 
+# include <sys/errno.h>
 
 # include "libft.h"
 
-int		check_commands(int argc, char **argv);
-void	pipe_commands(int argc, char **argv, int *file_fds);
-int		run_command(int input_fd, int output_fd, char *command);
+int		ft_strsfree(char **strs);
+int		free_commands(char ***commands);
+
+int		set_files(int argc, char **argv, int *file_fds);
+char	***setup_commands(int command_count, char **argv_commands, int *ec_ptr);
+
+void	pipe_commands(int *file_fds, char ***commands);
 
 #endif

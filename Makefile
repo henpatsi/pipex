@@ -6,7 +6,7 @@
 #    By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 08:46:34 by hpatsi            #+#    #+#              #
-#    Updated: 2023/12/13 15:06:38 by hpatsi           ###   ########.fr        #
+#    Updated: 2023/12/14 14:18:51 by hpatsi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = pipex
 
 LIBFT = ./libft/libft.a
 
-SOURCES = pipex.c check_input.c piping.c commands.c
+SOURCES = pipex.c handle_input.c piping.c str_utils.c
 
 OBJECTS = $(SOURCES:.c=.o)
 
@@ -86,37 +86,37 @@ test: $(NAME)
 	@echo ""
 
 	./$(NAME) $(TEST_DIR)infile1 "nocommand" "wc" $(TEST_DIR)outfile1
-#	cat $(TEST_DIR)outfile1
-#	@rm $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
 	@echo ""
 
 	@printf ${LGREEN}"\n\n- Second Command -\n"${NC}
-#	< $(TEST_DIR)infile1 wc | nocommand > $(TEST_DIR)outfile1
-#	cat $(TEST_DIR)outfile1
-#	@rm $(TEST_DIR)outfile1
-#	@echo ""
+	< $(TEST_DIR)infile1 wc | nocommand > $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
+	@echo ""
 
 	./$(NAME) $(TEST_DIR)infile1 "wc" "nocommand" $(TEST_DIR)outfile1
-#	cat $(TEST_DIR)outfile1
-#	@rm $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
 	@echo ""
 	
 	@printf ${LGREEN}"\n\n- Both Commands -\n"${NC}
-#	< $(TEST_DIR)infile1 nocommand | nocommand > $(TEST_DIR)outfile1
-#	cat $(TEST_DIR)outfile1
-#	@rm $(TEST_DIR)outfile1
-#	@echo ""
+	< $(TEST_DIR)infile1 nocommand1 | nocommand2 > $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
+	@echo ""
 
-	./$(NAME) $(TEST_DIR)infile1 "nocommand" "nocommand" $(TEST_DIR)outfile1
-#	cat $(TEST_DIR)outfile1
-#	@rm $(TEST_DIR)outfile1
+	./$(NAME) $(TEST_DIR)infile1 "nocommand1" "nocommand2" $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
 	@echo ""
 
 	@printf ${LGREEN}"\n\n- Invalid Command Args -\n"${NC}
-#	< $(TEST_DIR)infile1 wc | wc --noargs > $(TEST_DIR)outfile1
-#	cat $(TEST_DIR)outfile1
-#	@rm $(TEST_DIR)outfile1
-#	@echo ""
+	< $(TEST_DIR)infile1 wc | wc --noargs > $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
+	@echo ""
 
 	./$(NAME) $(TEST_DIR)infile1 "wc" "wc --noarg" $(TEST_DIR)outfile1
 	cat $(TEST_DIR)outfile1
@@ -142,8 +142,8 @@ test: $(NAME)
 	@echo ""
 	
 	./$(NAME) $(TEST_DIR)infile_noread "wc" "wc" $(TEST_DIR)outfile1
-#	cat $(TEST_DIR)outfile1
-#	@rm $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
 	@echo ""
 
 	@printf ${LGREEN}"\n\n- Input Does Not Exist -\n"${NC}
@@ -153,21 +153,23 @@ test: $(NAME)
 	@echo ""
 
 	./$(NAME) $(TEST_DIR)infile_doesnotexist "wc" "wc" $(TEST_DIR)outfile1
-#	cat $(TEST_DIR)outfile1
-#	@rm $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
 	@echo ""
 
 	@printf ${LGREEN}"\n\n- Output Write Restricted -\n"${NC}
-#	< $(TEST_DIR)infile1 cat | wc -l > $(TEST_DIR)outfile_nowrite
-#	@echo ""
+	< $(TEST_DIR)infile1 cat | wc -l > $(TEST_DIR)outfile_nowrite
+	@echo ""
 	./$(NAME) $(TEST_DIR)infile1 "cat" "wc -l" $(TEST_DIR)outfile_nowrite
 	@echo ""
 
-	./pipex $(TEST_DIR)infile1 "nocommand" "nocommand" $(TEST_DIR)outfile_nowrite
+	< $(TEST_DIR)infile1 nocommand1 | nocommand2 > $(TEST_DIR)outfile_nowrite
+	@echo ""
+	./pipex $(TEST_DIR)infile1 "nocommand1" "nocommand2" $(TEST_DIR)outfile_nowrite
 	@echo ""
 
 test_bonus: $(NAME)
-	@echo "\n\n----- VALID ALL -----\n"
+	@printf ${GREEN}"\n\n----- VALID ALL -----\n\n"${NC}
 	< $(TEST_DIR)infile1 grep 3 | wc | wc | tr -d 3 > $(TEST_DIR)outfile1
 	@echo ""
 	cat $(TEST_DIR)outfile1
