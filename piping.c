@@ -98,12 +98,15 @@ void	pipe_commands(int *file_fds, char ***commands)
 		return ;
 	}
 	i = 0;
-	file_to_pipe(file_fds, pipe_fds, commands[i]);
+	if (file_to_pipe(file_fds, pipe_fds, commands[i]) == -1)
+		return ;
 	i++;
 	while (commands[i + 1] != 0)
 	{
-		pipe_to_pipe(pipe_fds, commands[i]);
+		if (pipe_to_pipe(pipe_fds, commands[i]) == -1)
+			return ;
 		i++;
 	}
-	pipe_to_file(file_fds, pipe_fds, commands[i]);
+	if (pipe_to_file(file_fds, pipe_fds, commands[i]) == -1)
+		return ;
 }

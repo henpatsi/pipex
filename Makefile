@@ -49,7 +49,7 @@ fclean: clean
 re: fclean all
 
 debug: clean $(DEBUG_OBJECTS) $(LIBFT)
-	cc $(CFLAGS) -g $(SOURCES) $(LIBFT) -o pipex
+	cc $(CFLAGS) -fsanitize=address -static-libasan -g $(SOURCES) $(LIBFT) -o pipex
 
 TEST_DIR = ./test_files/
 
@@ -129,7 +129,17 @@ test: $(NAME)
 	@rm $(TEST_DIR)outfile1
 	@echo ""
 
+	< $(TEST_DIR)infile1 wc --noargs | wc > $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
+	@echo ""
+
 	./$(NAME) $(TEST_DIR)infile1 "wc --noarg" "wc" $(TEST_DIR)outfile1
+	cat $(TEST_DIR)outfile1
+	@rm $(TEST_DIR)outfile1
+	@echo ""
+
+	< $(TEST_DIR)infile1 wc --noargs | wc --noargs > $(TEST_DIR)outfile1
 	cat $(TEST_DIR)outfile1
 	@rm $(TEST_DIR)outfile1
 	@echo ""
