@@ -12,18 +12,18 @@
 
 #include "pipex.h"
 
-static const char	*g_paths[7] = {"/usr/local/bin/", "/usr/bin/", "/bin/",
-	"/usr/sbin/", "/sbin/", 0};
+//static const char	*g_paths[7] = {"/usr/local/bin/", "/usr/bin/", "/bin/",
+//	"/usr/sbin/", "/sbin/", 0};
 
-char	*add_path(char *command, int *ec_ptr)
+char	*add_path(char *command, int *ec_ptr, char **paths)
 {
 	char	*path_command;
 	int		i;
 
 	i = 0;
-	while (g_paths[i] != 0)
+	while (paths[i] != 0)
 	{
-		path_command = ft_strjoin(g_paths[i], command);
+		path_command = ft_strjoin(paths[i], command);
 		if (path_command == 0)
 			return (0);
 		if (access(path_command, X_OK) != -1)
@@ -37,7 +37,7 @@ char	*add_path(char *command, int *ec_ptr)
 	return (ft_strdup(command));
 }
 
-char	**create_command(char *command_str, int *ec_ptr)
+char	**create_command(char *command_str, int *ec_ptr, char **paths)
 {
 	char	**command_arr;
 	char	*path_command;
@@ -45,7 +45,7 @@ char	**create_command(char *command_str, int *ec_ptr)
 	command_arr = ft_split(command_str, ' ');
 	if (command_arr == 0)
 		return (0);
-	path_command = add_path(command_arr[0], ec_ptr);
+	path_command = add_path(command_arr[0], ec_ptr, paths);
 	if (path_command == 0)
 	{
 		ft_strsfree(command_arr);
@@ -56,7 +56,7 @@ char	**create_command(char *command_str, int *ec_ptr)
 	return (command_arr);
 }
 
-char	***setup_commands(int command_count, char **argv_commands, int *ec_ptr)
+char	***setup_commands(int command_count, char **argv_commands, int *ec_ptr, char **paths)
 {
 	char	***commands;
 	int		i;
@@ -67,7 +67,7 @@ char	***setup_commands(int command_count, char **argv_commands, int *ec_ptr)
 	i = 0;
 	while (i < command_count)
 	{
-		commands[i] = create_command(argv_commands[i], ec_ptr);
+		commands[i] = create_command(argv_commands[i], ec_ptr, paths);
 		if (commands[i] == 0)
 		{
 			free_commands(commands);
@@ -81,10 +81,13 @@ char	***setup_commands(int command_count, char **argv_commands, int *ec_ptr)
 
 int	set_files(int argc, char **argv, int *file_fds)
 {
+	if (ft_strcmp(argv[1], "here_doc") == 0)
+		file_fds[1] = open(argv[argc - 1], O_APPEND | O_CREAT, 0666);
+
 	file_fds[0] = open(argv[1], O_RDONLY);
 	if (file_fds[0] == -1)
 		perror(argv[1]);
-	file_fds[1] = open(argv[argc - 1], O_RDWR | O_CREAT, 0666);
+	file_fds[1] = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0666);
 	if (file_fds[1] == -1)
 	{
 		close(file_fds[0]);

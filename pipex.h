@@ -24,7 +24,7 @@ int		ft_strsfree(char **strs);
 int		free_commands(char ***commands);
 
 int		set_files(int argc, char **argv, int *file_fds);
-char	***setup_commands(int command_count, char **argv_commands, int *ec_ptr);
+char	***setup_commands(int command_count, char **argv_commands, int *ec_ptr, char **paths);
 
 void	pipe_commands(int *file_fds, char ***commands);
 
