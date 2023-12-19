@@ -6,7 +6,7 @@
 #    By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 08:46:34 by hpatsi            #+#    #+#              #
-#    Updated: 2023/12/14 14:59:23 by hpatsi           ###   ########.fr        #
+#    Updated: 2023/12/19 09:31:29 by hpatsi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,9 +14,9 @@ NAME = pipex
 
 LIBFT = ./libft/libft.a
 
-SOURCES = pipex.c handle_input.c piping.c free.c
+SOURCES = pipex.c setup_commands.c setup_files.c piping.c free.c
 
-BONUS_SOURCES = pipex_bonus.c handle_input_bonus.c piping_bonus.c str_utils_bonus.c
+BONUS_SOURCES = pipex_bonus.c setup_commands.c piping_bonus.c free_bonus.c
 
 OBJECTS = $(SOURCES:.c=.o)
 
@@ -182,6 +182,12 @@ test: $(NAME)
 	< $(TEST_DIR)infile1 nocommand1 | nocommand2 > $(TEST_DIR)outfile_nowrite
 	@echo ""
 	./pipex $(TEST_DIR)infile1 "nocommand1" "nocommand2" $(TEST_DIR)outfile_nowrite
+	@echo ""
+
+	@printf ${LGREEN}"\n\n- Input Output Restricted -\n"${NC}
+	< $(TEST_DIR)infile_doesnotexist cat | wc -l > $(TEST_DIR)outfile_nowrite
+	@echo ""
+	./$(NAME) $(TEST_DIR)infile_doesnotexist "cat" "wc -l" $(TEST_DIR)outfile_nowrite
 	@echo ""
 
 test_bonus: $(NAME)
