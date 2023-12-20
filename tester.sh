@@ -60,10 +60,10 @@ check_exit_code()
 run_two_commands()
 {
 	echo "$COMMAND1 | $COMMAND2"
-	< ${INFILE} $COMMAND1 | $COMMAND2 > ${OUTFILE_BASH}
+	< "${INFILE}" $COMMAND1 | $COMMAND2 > "${OUTFILE_BASH}"
 	EXIT_CODE_BASH=$?
 #	cat ${VALID_OUTFILE_BASH}
-	${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" ${OUTFILE}
+	${PIPEX} "${INFILE}" "$COMMAND1" "$COMMAND2" "${OUTFILE}"
 	EXIT_CODE=$?
 #	cat ${VALID_OUTFILE}
 }
@@ -188,6 +188,12 @@ run_two_commands
 check_output
 check_exit_code
 
+COMMAND1=" "
+COMMAND2="cat"
+run_two_commands
+check_output
+check_exit_code
+
 printf ${SUBHEADER_COLOR}"\n- Second Command -\n\n"${NC}
 
 COMMAND1="wc"
@@ -204,6 +210,12 @@ check_exit_code
 
 COMMAND1="cat"
 COMMAND2=""
+run_two_commands
+check_output
+check_exit_code
+
+COMMAND1="cat"
+COMMAND2=" "
 run_two_commands
 check_output
 check_exit_code
@@ -262,6 +274,14 @@ run_two_commands
 check_output
 check_exit_code
 
+INFILE=""
+
+COMMAND1="cat"
+COMMAND2="wc -l"
+run_two_commands
+check_output
+check_exit_code
+
 printf ${SUBHEADER_COLOR}"\n- Output Write Restricted -\n\n"${NC}
 
 INFILE=${VALID_INFILE}
@@ -273,6 +293,17 @@ COMMAND2="wc -l"
 run_two_commands
 check_output
 check_exit_code
+
+# printf ${SUBHEADER_COLOR}"\n- Output Invalid Name -\n\n"${NC}
+
+# OUTFILE=""
+# OUTFILE_BASH=""
+
+# COMMAND1="cat"
+# COMMAND2="wc -l"
+# run_two_commands
+# check_output
+# check_exit_code
 
 printf ${SUBHEADER_COLOR}"\n- Input Output Restricted -\n\n"${NC}
 
