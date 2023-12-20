@@ -6,7 +6,7 @@
 #    By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 08:46:34 by hpatsi            #+#    #+#              #
-#    Updated: 2023/12/19 15:16:25 by hpatsi           ###   ########.fr        #
+#    Updated: 2023/12/20 17:33:48 by hpatsi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ LIBFT = ./libft/libft.a
 
 SOURCES = pipex.c setup_commands.c setup_files.c piping.c free.c
 
-BONUS_SOURCES = pipex_bonus.c setup_commands.c piping_bonus.c free_bonus.c
+BONUS_SOURCES = pipex_bonus.c setup_commands_bonus.c setup_files_bonus.c piping_bonus.c free_bonus.c
 
 OBJECTS = $(SOURCES:.c=.o)
 

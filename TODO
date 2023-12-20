@@ -1,4 +1,0 @@
-// With invalid input:
-Warning: invalid file descriptor -1 in syscall close()
-
-Move command error check to when execing

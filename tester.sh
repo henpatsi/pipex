@@ -14,6 +14,9 @@ VALID_OUTFILE_BASH=${TEST_DIR}valid_outfile_bash
 # ERROR_LOG=${TEST_DIR}error_log
 # ERROR_LOG_BASH=${TEST_DIR}error_log_bash
 
+LEAKS_LOG=${TEST_DIR}leaks_log
+TRASH_LOG=${TEST_DIR}trash_log
+
 NC='\033[0m'
 GREEN='\033[0;32m'
 LGREEN='\033[1;32m'
@@ -43,15 +46,14 @@ check_exit_code()
 {
 	if [ ${EXIT_CODE_BASH} -eq ${EXIT_CODE} ]
 	then
-		echo -e ${GREEN}"Exit code: [OK]"
-		echo -e "bash was: ${EXIT_CODE_BASH}"
-		echo -e "pipex was: ${EXIT_CODE}"${NC}
+		echo -e ${GREEN}"Exit code: [OK]"${NC}
+#		echo -e "bash was: ${EXIT_CODE_BASH}"
+#		echo -e "pipex was: ${EXIT_CODE}"${NC}
 	else
 		echo -e ${RED}"Exit code: [KO]"
 		echo -e "bash was: ${EXIT_CODE_BASH}"
 		echo -e "pipex was: ${EXIT_CODE}"${NC}
 	fi
-	echo ""
 }
 
 run_two_commands()
@@ -63,6 +65,20 @@ run_two_commands()
 	${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" ${OUTFILE}
 	EXIT_CODE=$?
 #	cat ${VALID_OUTFILE}
+}
+
+run_two_commands_leaks()
+{
+	leaks --atExit -q -- ${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" ${OUTFILE} 2>${TRASH_LOG} 1> ${LEAKS_LOG}
+	EXPECTED_LINES=4
+	LINES=$(sed -n '$=' ${LEAKS_LOG})
+	if [ ${LINES} -eq ${EXPECTED_LINES} ]
+	then
+		echo -e ${GREEN}"Leaks: [OK]"${NC}
+	else
+		echo -e ${RED}"Leaks: [KO]"
+		echo -e ${LEAKS_LOG}${NC}
+	fi
 }
 
 run_three_commands()
@@ -105,20 +121,23 @@ COMMAND2="grep 3"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks
 
 COMMAND1="grep 3"
 COMMAND2="wc"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks
 
 COMMAND1="ls -la"
 COMMAND2="grep pipex"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks
 
-printf ${SUBHEADER_COLOR}"- Two calls -\n\n"${NC}
+printf ${SUBHEADER_COLOR}"\n- Two calls -\n\n"${NC}
 
 COMMAND1="ls -la"
 COMMAND2="grep x"
@@ -128,6 +147,7 @@ COMMAND2="wc"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks
 
 
 
@@ -154,7 +174,7 @@ run_two_commands
 check_output
 check_exit_code
 
-printf ${SUBHEADER_COLOR}"- Second Command -\n\n"${NC}
+printf ${SUBHEADER_COLOR}"\n- Second Command -\n\n"${NC}
 
 COMMAND1="wc"
 COMMAND2="nocommand"
@@ -162,7 +182,13 @@ run_two_commands
 check_output
 check_exit_code
 
-printf ${SUBHEADER_COLOR}"- Both Commands -\n\n"${NC}
+COMMAND1="ls"
+COMMAND2="nocommand"
+run_two_commands
+check_output
+check_exit_code
+
+printf ${SUBHEADER_COLOR}"\n- Both Commands -\n\n"${NC}
 
 COMMAND1="nocommand1"
 COMMAND2="nocommand2"
@@ -170,26 +196,28 @@ run_two_commands
 check_output
 check_exit_code
 
-printf ${SUBHEADER_COLOR}"- Invalid Command Args -\n\n"${NC}
+printf ${SUBHEADER_COLOR}"\n- Invalid Command Args -\n\n"${NC}
 
 COMMAND1="wc"
 COMMAND2="wc --noargs"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks
 
 COMMAND1="wc --noargs"
 COMMAND2="wc"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks
 
 COMMAND1="wc --noargs"
 COMMAND2="wc --noargs"
 run_two_commands
 check_output
 check_exit_code
-
+run_two_commands_leaks
 
 
 printf ${HEADER_COLOR}"\n----- INVALID FILES -----\n"${NC}
@@ -204,7 +232,7 @@ run_two_commands
 check_output
 check_exit_code
 
-printf ${SUBHEADER_COLOR}"- Input Does Not Exist -\n\n"${NC}
+printf ${SUBHEADER_COLOR}"\n- Input Does Not Exist -\n\n"${NC}
 
 INFILE=doesnotexist
 
@@ -214,7 +242,7 @@ run_two_commands
 check_output
 check_exit_code
 
-printf ${SUBHEADER_COLOR}"- Output Write Restricted -\n\n"${NC}
+printf ${SUBHEADER_COLOR}"\n- Output Write Restricted -\n\n"${NC}
 
 INFILE=${VALID_INFILE}
 OUTFILE=${INVALID_OUTFILE}
@@ -226,7 +254,7 @@ run_two_commands
 check_output
 check_exit_code
 
-printf ${SUBHEADER_COLOR}"- Input Output Restricted -\n\n"${NC}
+printf ${SUBHEADER_COLOR}"\n- Input Output Restricted -\n\n"${NC}
 
 INFILE=${INVALID_INFILE}
 OUTFILE=${INVALID_OUTFILE}
@@ -234,6 +262,46 @@ OUTFILE_BASH=${INVALID_OUTFILE}
 
 COMMAND1="cat"
 COMMAND2="wc -l"
+run_two_commands
+check_output
+check_exit_code
+
+
+
+printf ${HEADER_COLOR}"\n----- INVALID MIXED -----\n"${NC}
+
+printf ${SUBHEADER_COLOR}"\n- Invalid infile and command -\n\n"${NC}
+
+INFILE=${INVALID_INFILE}
+OUTFILE=${VALID_OUTFILE}
+OUTFILE_BASH=${VALID_OUTFILE_BASH}
+
+COMMAND1="wc"
+COMMAND2="wc --noargs"
+run_two_commands
+check_output
+check_exit_code
+
+COMMAND1="wc --noargs"
+COMMAND2="wc"
+run_two_commands
+check_output
+check_exit_code
+
+printf ${SUBHEADER_COLOR}"\n- Invalid outfile and command -\n\n"${NC}
+
+INFILE=${VALID_INFILE}
+OUTFILE=${INVALID_OUTFILE}
+OUTFILE_BASH=${INVALID_OUTFILE}
+
+COMMAND1="wc"
+COMMAND2="wc --noargs"
+run_two_commands
+check_output
+check_exit_code
+
+COMMAND1="wc --noargs"
+COMMAND2="wc"
 run_two_commands
 check_output
 check_exit_code
@@ -264,7 +332,7 @@ run_five_commands
 check_output
 check_exit_code
 
-printf ${SUBHEADER_COLOR}"- Multiple calls -\n\n"${NC}
+printf ${SUBHEADER_COLOR}"\n- Multiple calls -\n\n"${NC}
 
 COMMAND1="ls -la"
 COMMAND2="grep pipex"
@@ -282,7 +350,7 @@ run_five_commands
 check_output
 check_exit_code
 
-printf ${SUBHEADER_COLOR}"- Fails -\n\n"${NC}
+printf ${SUBHEADER_COLOR}"\n- Fails -\n\n"${NC}
 
 COMMAND1="nocommand"
 COMMAND2="cat"
