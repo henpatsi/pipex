@@ -89,6 +89,8 @@ char	**create_command(char *command_str, int *ec_ptr, char **paths)
 	command_arr = ft_split(command_str, ' ');
 	if (command_arr == 0)
 		return (0);
+	if (command_arr[0] == 0)
+		return (command_arr);
 	if (access(command_arr[0], X_OK) != -1)
 		*ec_ptr = 0;
 	else

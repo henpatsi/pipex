@@ -177,7 +177,13 @@ check_output
 check_exit_code
 
 COMMAND1="nocommand"
-COMMAND2="ls"
+COMMAND2="ls ./"
+run_two_commands
+check_output
+check_exit_code
+
+COMMAND1=""
+COMMAND2="cat"
 run_two_commands
 check_output
 check_exit_code
@@ -190,8 +196,14 @@ run_two_commands
 check_output
 check_exit_code
 
-COMMAND1="ls"
+COMMAND1="ls ./"
 COMMAND2="nocommand"
+run_two_commands
+check_output
+check_exit_code
+
+COMMAND1="cat"
+COMMAND2=""
 run_two_commands
 check_output
 check_exit_code
