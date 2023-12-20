@@ -89,14 +89,19 @@ char	**create_command(char *command_str, int *ec_ptr, char **paths)
 	command_arr = ft_split(command_str, ' ');
 	if (command_arr == 0)
 		return (0);
-	path_command = add_path(command_arr[0], ec_ptr, paths);
-	if (path_command == 0)
+	if (access(command_arr[0], X_OK) != -1)
+		*ec_ptr = 0;
+	else
 	{
-		ft_strsfree(command_arr);
-		return (0);
+		path_command = add_path(command_arr[0], ec_ptr, paths);
+		if (path_command == 0)
+		{
+			ft_strsfree(command_arr);
+			return (0);
+		}
+		free(command_arr[0]);
+		command_arr[0] = path_command;
 	}
-	free(command_arr[0]);
-	command_arr[0] = path_command;
 	return (command_arr);
 }
 

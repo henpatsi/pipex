@@ -23,6 +23,7 @@ LGREEN='\033[1;32m'
 RED='\033[0;31m'
 CYAN='\033[0;36m'
 LCYAN='\033[1;36m'
+YELLOW='\033[0;33m'
 
 HEADER_COLOR=${LCYAN}
 SUBHEADER_COLOR=${CYAN}
@@ -50,7 +51,7 @@ check_exit_code()
 #		echo -e "bash was: ${EXIT_CODE_BASH}"
 #		echo -e "pipex was: ${EXIT_CODE}"${NC}
 	else
-		echo -e ${RED}"Exit code: [KO]"
+		echo -e ${YELLOW}"Exit code: [KO]"
 		echo -e "bash was: ${EXIT_CODE_BASH}"
 		echo -e "pipex was: ${EXIT_CODE}"${NC}
 	fi
@@ -132,6 +133,13 @@ run_two_commands_leaks
 
 COMMAND1="ls -la"
 COMMAND2="grep pipex"
+run_two_commands
+check_output
+check_exit_code
+run_two_commands_leaks
+
+COMMAND1="/usr/bin/cat"
+COMMAND2="/usr/bin/wc"
 run_two_commands
 check_output
 check_exit_code
