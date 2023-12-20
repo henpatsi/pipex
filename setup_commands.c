@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 12:57:27 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/19 16:39:09 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/20 14:52:31 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,10 @@ char	*add_path(char *command, int *ec_ptr, char **paths)
 		if (path_command == 0)
 			return (0);
 		if (access(path_command, X_OK) != -1)
+		{
+			*ec_ptr = 0;
 			return (path_command);
+		}
 		free(path_command);
 		i++;
 	}
