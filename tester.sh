@@ -43,7 +43,9 @@ check_exit_code()
 {
 	if [ ${EXIT_CODE_BASH} -eq ${EXIT_CODE} ]
 	then
-		echo -e ${GREEN}"Exit code: [OK]"${NC}
+		echo -e ${GREEN}"Exit code: [OK]"
+		echo -e "bash was: ${EXIT_CODE_BASH}"
+		echo -e "pipex was: ${EXIT_CODE}"${NC}
 	else
 		echo -e ${RED}"Exit code: [KO]"
 		echo -e "bash was: ${EXIT_CODE_BASH}"

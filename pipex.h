@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 09:22:06 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/19 09:27:51 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/20 16:21:36 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,6 @@ int		free_commands(char ***commands);
 int		set_files(int argc, char **argv, int *file_fds);
 char	***set_commands(int count, char **comm_strs, int *ec_ptr, char *envp[]);
 
-void	pipe_commands(int *file_fds, char ***commands);
+void	pipe_commands(int *file_fds, char ***commands, int *exit_code);
 
 #endif

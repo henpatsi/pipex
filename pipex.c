@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 08:51:47 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/19 11:20:27 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/20 16:21:18 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	main(int argc, char **argv, char *envp[])
 		free_commands(commands);
 		return (1);
 	}
-	pipe_commands(file_fds, commands);
+	pipe_commands(file_fds, commands, &exit_code);
 	free_commands(commands);
 	return (exit_code);
 }
