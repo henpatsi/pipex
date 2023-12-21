@@ -50,10 +50,12 @@ check_exit_code()
 		echo -e ${GREEN}"Exit code: [OK]"${NC}
 #		echo -e "bash was: ${EXIT_CODE_BASH}"
 #		echo -e "pipex was: ${EXIT_CODE}"${NC}
+		EXIT_CODES_MATCH=1;
 	else
 		echo -e ${YELLOW}"Exit code: [KO]"
 		echo -e "bash was: ${EXIT_CODE_BASH}"
 		echo -e "pipex was: ${EXIT_CODE}"${NC}
+		EXIT_CODES_MATCH=0;
 	fi
 }
 
@@ -213,12 +215,20 @@ COMMAND2=""
 run_two_commands
 check_output
 check_exit_code
+if [ $EXIT_CODES_MATCH == 0 ]
+then
+	echo -e ${YELLOW}"bash gives 127 exit code in zsh shell!"${NC}
+fi
 
 COMMAND1="cat"
 COMMAND2=" "
 run_two_commands
 check_output
 check_exit_code
+if [ $EXIT_CODES_MATCH == 0 ]
+then
+	echo -e ${YELLOW}"bash gives 127 exit code in zsh shell!"${NC}
+fi
 
 printf ${SUBHEADER_COLOR}"\n- Both Commands -\n\n"${NC}
 
@@ -263,6 +273,7 @@ COMMAND2="wc -l"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks
 
 printf ${SUBHEADER_COLOR}"\n- Input Does Not Exist -\n\n"${NC}
 

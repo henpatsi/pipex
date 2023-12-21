@@ -6,13 +6,13 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 12:57:27 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/21 10:42:17 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/21 13:58:37 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-char	**add_slash(char	**paths)
+char	**add_slash(char **paths)
 {
 	int		i;
 	char	*tmp;
@@ -33,7 +33,7 @@ char	**add_slash(char	**paths)
 	return (paths);
 }
 
-char	**get_paths(char	*envp[])
+char	**get_paths(char *envp[])
 {
 	char	*path_str;
 	char	**paths;
@@ -56,7 +56,7 @@ char	**get_paths(char	*envp[])
 	return (0);
 }
 
-char	*add_path(char *command, int *ec_ptr, char **paths)
+char	*add_path(char *command, char **paths)
 {
 	char	*path_command;
 	int		i;
@@ -68,20 +68,16 @@ char	*add_path(char *command, int *ec_ptr, char **paths)
 		if (path_command == 0)
 			return (0);
 		if (access(path_command, X_OK) != -1)
-		{
-			*ec_ptr = 0;
 			return (path_command);
-		}
 		free(path_command);
 		i++;
 	}
 	ft_putstr_fd(command, 2);
 	ft_putstr_fd(": command not found\n", 2);
-	*ec_ptr = 127;
 	return (ft_strdup(command));
 }
 
-char	**create_command(char *command_str, int *ec_ptr, char **paths)
+char	**create_command(char *command_str, char **paths)
 {
 	char	**command_arr;
 	char	*path_command;
@@ -90,12 +86,13 @@ char	**create_command(char *command_str, int *ec_ptr, char **paths)
 	if (command_arr == 0)
 		return (0);
 	if (command_arr[0] == 0)
+	{
+		ft_putstr_fd(": command not found\n", 2);
 		return (command_arr);
-	if (access(command_arr[0], X_OK) != -1)
-		*ec_ptr = 0;
+	}
 	else
 	{
-		path_command = add_path(command_arr[0], ec_ptr, paths);
+		path_command = add_path(command_arr[0], paths);
 		if (path_command == 0)
 		{
 			ft_strsfree(command_arr);
@@ -107,7 +104,7 @@ char	**create_command(char *command_str, int *ec_ptr, char **paths)
 	return (command_arr);
 }
 
-char	***set_commands(int count, char **comm_strs, int *ec_ptr, char *envp[])
+char	***set_commands(int count, char **comm_strs, char *envp[])
 {
 	char	***commands;
 	int		i;
@@ -120,7 +117,7 @@ char	***set_commands(int count, char **comm_strs, int *ec_ptr, char *envp[])
 	paths = get_paths(envp);
 	while (i < count)
 	{
-		commands[i] = create_command(comm_strs[i], ec_ptr, paths);
+		commands[i] = create_command(comm_strs[i], paths);
 		if (commands[i] == 0)
 		{
 			free_commands(commands);

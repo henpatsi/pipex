@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 11:23:00 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/21 11:20:30 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/21 11:45:41 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,5 +115,6 @@ int	pipe_commands(int *file_fds, char ***commands, int **process_ids)
 	(*process_ids)[i] = pipe_to_file(file_fds, pipe_fds, commands[i]);
 	if ((*process_ids)[i] == -1)
 		return (-1);
+	(*process_ids)[++i] = 0;
 	return (0);
 }
