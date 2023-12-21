@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 12:57:27 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/21 13:58:37 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/21 15:38:21 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,11 +110,16 @@ char	***set_commands(int count, char **comm_strs, char *envp[])
 	int		i;
 	char	**paths;
 
-	commands = malloc((count + 1) * sizeof(char **));
+	commands = ft_calloc((count + 1), sizeof(char **));
 	if (commands == 0)
 		return (0);
 	i = 0;
 	paths = get_paths(envp);
+	if (paths == 0)
+	{
+		free_commands(commands);
+		return (0);
+	}
 	while (i < count)
 	{
 		commands[i] = create_command(comm_strs[i], paths);

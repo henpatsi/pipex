@@ -304,6 +304,7 @@ COMMAND2="wc -l"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks
 
 # printf ${SUBHEADER_COLOR}"\n- Output Invalid Name -\n\n"${NC}
 
@@ -327,6 +328,7 @@ COMMAND2="wc -l"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks
 
 
 

@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 08:51:47 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/21 14:16:18 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/21 15:38:25 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	handle_processes(int *file_fds, char ***commands)
 	int		exit_code;
 	char	*last_command;
 
-	process_ids = malloc(count_commands(commands) * sizeof(int));
+	process_ids = ft_calloc(count_commands(commands), sizeof(int));
 	if (process_ids == 0)
 	{
 		free(commands);
