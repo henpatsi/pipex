@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 11:23:00 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/20 16:38:54 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/21 11:20:30 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,12 @@ int	file_to_pipe(int *file_fds, int *pipe_fds, char **command)
 
 	process_id = fork();
 	if (process_id < 0)
+	{
 		perror("fork failed");
+		return (-1);
+	}
 	else if (process_id > 0)
 	{
-		wait(0);
 		close(file_fds[0]);
 		close(pipe_fds[1]);
 	}
@@ -37,32 +39,30 @@ int	file_to_pipe(int *file_fds, int *pipe_fds, char **command)
 		close(pipe_fds[0]);
 		return (run_command(file_fds[0], pipe_fds[1], command));
 	}
-	return (0);
+	return (process_id);
 }
 
 int	pipe_to_file(int *file_fds, int *pipe_fds, char **command)
 {
 	int	process_id;
-	int	ret;
 
 	process_id = fork();
 	if (process_id < 0)
 	{
 		perror("fork failed");
-		ret = -1;
+		return (-1);
 	}
 	else if (process_id > 0)
 	{
-		wait(&ret);
 		close(pipe_fds[0]);
 		close(file_fds[1]);
 	}
 	else
 	{
 		close(pipe_fds[1]);
-		ret = run_command(pipe_fds[0], file_fds[1], command);
+		return (run_command(pipe_fds[0], file_fds[1], command));
 	}
-	return (ret);
+	return (process_id);
 }
 
 int	pipe_to_pipe(int *pipe_fds, char **command)
@@ -80,7 +80,6 @@ int	pipe_to_pipe(int *pipe_fds, char **command)
 		perror("fork failed");
 	else if (process_id > 0)
 	{
-		wait(0);
 		close(pipe_fds[0]);
 		close(pipe2_fds[1]);
 		pipe_fds[0] = pipe2_fds[0];
@@ -88,31 +87,33 @@ int	pipe_to_pipe(int *pipe_fds, char **command)
 	}
 	else
 		return (run_command(pipe_fds[0], pipe2_fds[1], command));
-	return (0);
+	return (process_id);
 }
 
-void	pipe_commands(int *file_fds, char ***commands, int *exit_code)
+int	pipe_commands(int *file_fds, char ***commands, int **process_ids)
 {
 	int	pipe_fds[2];
 	int	i;
-	int	ret;
 
 	if (pipe(pipe_fds) < 0)
 	{
 		perror("pipe failed");
-		return ;
+		return (-1);
 	}
 	i = 0;
-	if (file_to_pipe(file_fds, pipe_fds, commands[i]) == -1)
-		return ;
+	(*process_ids)[i] = file_to_pipe(file_fds, pipe_fds, commands[i]);
+	if ((*process_ids)[i] == -1)
+		return (-1);
 	i++;
 	while (commands[i + 1] != 0)
 	{
-		if (pipe_to_pipe(pipe_fds, commands[i]) == -1)
-			return ;
+		(*process_ids)[i] = pipe_to_pipe(pipe_fds, commands[i]);
+		if ((*process_ids)[i] == -1)
+			return (-1);
 		i++;
 	}
-	ret = pipe_to_file(file_fds, pipe_fds, commands[i]);
-	if (ret == 256)
-		*exit_code = 1;
+	(*process_ids)[i] = pipe_to_file(file_fds, pipe_fds, commands[i]);
+	if ((*process_ids)[i] == -1)
+		return (-1);
+	return (0);
 }

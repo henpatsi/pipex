@@ -6,7 +6,7 @@
 #    By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 08:46:34 by hpatsi            #+#    #+#              #
-#    Updated: 2023/12/20 17:33:48 by hpatsi           ###   ########.fr        #
+#    Updated: 2023/12/21 10:37:11 by hpatsi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,9 +14,9 @@ NAME = pipex
 
 LIBFT = ./libft/libft.a
 
-SOURCES = pipex.c setup_commands.c setup_files.c piping.c free.c
+SOURCES = pipex.c setup_commands.c setup_files.c piping.c helpers.c
 
-BONUS_SOURCES = pipex_bonus.c setup_commands_bonus.c setup_files_bonus.c piping_bonus.c free_bonus.c
+BONUS_SOURCES = pipex_bonus.c setup_commands_bonus.c setup_files_bonus.c piping_bonus.c helpers_bonus.c
 
 OBJECTS = $(SOURCES:.c=.o)
 
@@ -49,4 +49,4 @@ fclean: clean
 re: fclean all
 
 debug: clean $(DEBUG_OBJECTS) $(LIBFT)
-	cc $(CFLAGS) -fsanitize=address -static-libasan -g $(SOURCES) $(LIBFT) -o pipex
+	cc $(CFLAGS) -g $(SOURCES) $(LIBFT) -o pipex

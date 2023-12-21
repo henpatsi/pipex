@@ -138,7 +138,7 @@ check_output
 check_exit_code
 run_two_commands_leaks
 
-COMMAND1="/usr/bin/cat"
+COMMAND1="/bin/cat"
 COMMAND2="/usr/bin/wc"
 run_two_commands
 check_output
@@ -351,7 +351,7 @@ run_two_commands
 check_output
 check_exit_code
 
-COMMAND1="wc --noargs"
+COMMAND1="nocommand"
 COMMAND2="wc"
 run_two_commands
 check_output

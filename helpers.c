@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   helpers.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 16:17:11 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/20 17:34:42 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/21 11:11:55 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,4 +38,26 @@ int	free_commands(char ***commands)
 	}
 	free(commands);
 	return (0);
+}
+
+int	count_commands(char ***commands)
+{
+	int	i;
+
+	i = 0;
+	while (commands[i] != 0)
+		i++;
+	return (i);
+}
+
+void	wait_for_children(int *process_ids)
+{
+	int	i;
+
+	i = 0;
+	while (process_ids[i] != 0)
+	{
+		wait(&process_ids[i]);
+		i++;
+	}
 }

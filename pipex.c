@@ -6,11 +6,31 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 08:51:47 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/20 17:40:07 by hpatsi           ###   ########.fr       */
+/*   Updated: 2023/12/21 11:21:59 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+int	start(int *file_fds, char ***commands)
+{
+	int	*process_ids;
+	int	ret;
+
+	process_ids = malloc(count_commands(commands) * sizeof(int));
+	if (process_ids == 0)
+	{
+		free(commands);
+		return (1);
+	}
+	ret = pipe_commands(file_fds, commands, &process_ids);
+	free_commands(commands);
+	wait_for_children(process_ids);
+	free(process_ids);
+	if (ret == -1)
+		return (1);
+	return (0);
+}
 
 int	main(int argc, char **argv, char *envp[])
 {
@@ -30,13 +50,12 @@ int	main(int argc, char **argv, char *envp[])
 	else
 		commands = set_commands(argc - 3, argv + 2, &exit_code, envp);
 	if (commands == 0)
-		return (0);
+		return (1);
 	if (set_files(argc, argv, file_fds) == -1)
 	{
 		free_commands(commands);
 		return (1);
 	}
-	pipe_commands(file_fds, commands, &exit_code);
-	free_commands(commands);
+	exit_code = start(file_fds, commands);
 	return (exit_code);
 }
