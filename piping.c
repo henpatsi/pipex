@@ -14,6 +14,8 @@
 
 int	run_command(int input_fd, int output_fd, char **command)
 {
+	if (command[0] == 0)
+		return (-1);
 	if (dup2(input_fd, 0) == -1 || dup2(output_fd, 1) == -1)
 		return (-1);
 	return (execve(command[0], command, NULL));

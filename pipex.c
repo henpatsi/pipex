@@ -32,7 +32,7 @@ int	handle_processes(int *file_fds, char ***commands)
 	int		exit_code;
 	char	*last_command;
 
-	process_ids = ft_calloc(count_commands(commands), sizeof(int));
+	process_ids = ft_calloc(count_commands(commands) + 1, sizeof(int));
 	if (process_ids == 0)
 	{
 		free(commands);
@@ -40,13 +40,13 @@ int	handle_processes(int *file_fds, char ***commands)
 	}
 	if (pipe_commands(file_fds, commands, &process_ids) == -1)
 	{
-		free(commands);
+		free_commands(commands);
 		free(process_ids);
 		return (1);
 	}
 	exit_code = wait_for_children(process_ids);
 	last_command = *commands[count_commands(commands) - 1];
-	if (access(last_command, X_OK) == -1)
+	if (last_command != 0 && access(last_command, X_OK) == -1)
 		exit_code = 127;
 	free(process_ids);
 	free_commands(commands);
