@@ -38,6 +38,12 @@ int	infile_from_stdin(char **argv, int *file_fds)
 	{
 		ft_printf("pipe heredoc> ");
 		read_str = get_next_line(0);
+		if (read_str == 0)
+		{
+			close(pipe_fds[0]);
+			close(pipe_fds[1]);
+			return (-1);
+		}
 		if (ft_strncmp(read_str, argv[2], ft_strlen(argv[2])) == 0)
 			break ;
 		if (write_line(pipe_fds, read_str) == -1)
