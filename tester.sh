@@ -11,12 +11,11 @@ VALID_OUTFILE=${TEST_DIR}valid_outfile
 INVALID_OUTFILE=${TEST_DIR}invalid_outfile
 VALID_OUTFILE_BASH=${TEST_DIR}valid_outfile_bash
 
-# ERROR_LOG=${TEST_DIR}error_log
-# ERROR_LOG_BASH=${TEST_DIR}error_log_bash
-
 LEAKS_TOOL="valgrind" # can be leaks or valgrind
 LEAKS_LOG=${TEST_DIR}leaks_log
 TRASH_LOG=${TEST_DIR}trash_log
+rm -f $LEAKS_LOG
+rm -f $TRASH_LOG
 
 NC='\033[0m'
 GREEN='\033[0;32m'
@@ -37,12 +36,6 @@ check_output()
 	rm ${OUTFILE_BASH}
 	rm ${OUTFILE}
 }
-
-# check_stderr()
-# {
-# 	cmp ${ERROR_LOG_BASH} ${ERROR_LOG} && 
-# 		echo -e ${GREEN}"stderr ouput: [OK]"${NC} || echo -e ${RED}"stderr ouput: [KO]"${NC}
-# }
 
 check_exit_code()
 {
@@ -71,58 +64,6 @@ run_two_commands()
 #	cat ${VALID_OUTFILE}
 }
 
-run_two_commands_leaks()
-{
-	if [[ "$LEAKS_TOOL" == "leaks" ]]
-	then
-		leaks --atExit -q -- ${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" ${OUTFILE} 2>${TRASH_LOG} 1> ${LEAKS_LOG}
-		EXPECTED_LINES=4
-		LINES=$(sed -n '$=' ${LEAKS_LOG})
-		if [ ${LINES} -eq ${EXPECTED_LINES} ]
-		then
-			echo -e ${GREEN}"Leaks: [OK]"${NC}
-		else
-			echo -e ${RED}"Leaks: [KO]"
-			echo -e ${LEAKS_LOG}${NC}
-		fi
-	fi
-
-	if [[ "$LEAKS_TOOL" == "valgrind" ]]
-	then
-		echo "TESTING: " >> ${LEAKS_LOG}
-		echo "${PIPEX}" "${INFILE}" "$COMMAND1" "$COMMAND2" "${OUTFILE}" >> ${LEAKS_LOG}
-		echo "" >> ${LEAKS_LOG}
-		valgrind ${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" ${OUTFILE} 2>>${LEAKS_LOG}
-		echo "" >> ${LEAKS_LOG}
-		# if [ ${LINES} -eq ${EXPECTED_LINES} ]
-		# then
-		# 	echo -e ${GREEN}"Leaks: [OK]"${NC}
-		# else
-		# 	echo -e ${RED}"Leaks: [KO]"
-		# 	echo -e ${LEAKS_LOG}${NC}
-		# fi
-	fi
-}
-
-run_two_commands_leaks_valgrind()
-{
-	if [[ "$LEAKS_TOOL" == "valgrind" ]]
-	then
-		echo "TESTING: " >> ${LEAKS_LOG}
-		echo "${PIPEX}" "${INFILE}" "$COMMAND1" "$COMMAND2" "${OUTFILE}" >> ${LEAKS_LOG}
-		echo "" >> ${LEAKS_LOG}
-		valgrind ${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" ${OUTFILE} 2>>${LEAKS_LOG}
-		echo "" >> ${LEAKS_LOG}
-		# if [ ${LINES} -eq ${EXPECTED_LINES} ]
-		# then
-		# 	echo -e ${GREEN}"Leaks: [OK]"${NC}
-		# else
-		# 	echo -e ${RED}"Leaks: [KO]"
-		# 	echo -e ${LEAKS_LOG}${NC}
-		# fi
-	fi
-}
-
 run_three_commands()
 {
 	echo "$COMMAND1 | $COMMAND2 | $COMMAND3"
@@ -148,6 +89,119 @@ run_five_commands()
 run_heredoc_commands()
 {
 	${PIPEX} ${INFILE} "" "$COMMAND1" "$COMMAND2" ${OUTFILE}
+}
+
+run_two_commands_leaks()
+{
+	if [[ "$LEAKS_TOOL" == "leaks" ]]
+	then
+		leaks --atExit -q -- ${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" ${OUTFILE} 2>${TRASH_LOG} 1> ${LEAKS_LOG}
+		EXPECTED_LINES=4
+		LINES=$(sed -n '$=' ${LEAKS_LOG})
+		if [ ${LINES} -eq ${EXPECTED_LINES} ]
+		then
+			echo -e ${GREEN}"Leaks: [OK]"${NC}
+		else
+			echo -e ${RED}"Leaks: [KO]"
+			echo -e ${LEAKS_LOG}${NC}
+		fi
+	else
+		run_two_commands_leaks_valgrind
+	fi
+}
+
+run_two_commands_leaks_valgrind()
+{
+	if [[ "$LEAKS_TOOL" == "valgrind" ]]
+	then
+		echo "TESTING: " >> ${LEAKS_LOG}
+		echo "${PIPEX}" "${INFILE}" "$COMMAND1" "$COMMAND2" "${OUTFILE}" >> ${LEAKS_LOG}
+		echo "" >> ${LEAKS_LOG}
+		valgrind ${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" ${OUTFILE} 2>>${LEAKS_LOG}
+		echo "" >> ${LEAKS_LOG}
+		# if [ ${LINES} -eq ${EXPECTED_LINES} ]
+		# then
+		# 	echo -e ${GREEN}"Leaks: [OK]"${NC}
+		# else
+		# 	echo -e ${RED}"Leaks: [KO]"
+		# 	echo -e ${LEAKS_LOG}${NC}
+		# fi
+	fi
+}
+
+run_three_commands_leaks()
+{
+	if [[ "$LEAKS_TOOL" == "leaks" ]]
+	then
+		leaks --atExit -q -- ${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" "$COMMAND3" ${OUTFILE} 2>${TRASH_LOG} 1> ${LEAKS_LOG}
+		EXPECTED_LINES=4
+		LINES=$(sed -n '$=' ${LEAKS_LOG})
+		if [ ${LINES} -eq ${EXPECTED_LINES} ]
+		then
+			echo -e ${GREEN}"Leaks: [OK]"${NC}
+		else
+			echo -e ${RED}"Leaks: [KO]"
+			echo -e ${LEAKS_LOG}${NC}
+		fi
+	else
+		run_three_commands_leaks_valgrind
+	fi
+}
+
+run_three_commands_leaks_valgrind()
+{
+	if [[ "$LEAKS_TOOL" == "valgrind" ]]
+	then
+		echo "TESTING: " >> ${LEAKS_LOG}
+		echo "${PIPEX}" "${INFILE}" "$COMMAND1" "$COMMAND2" "$COMMAND3" "${OUTFILE}" >> ${LEAKS_LOG}
+		echo "" >> ${LEAKS_LOG}
+		valgrind ${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" "$COMMAND3" ${OUTFILE} 2>>${LEAKS_LOG}
+		echo "" >> ${LEAKS_LOG}
+		# if [ ${LINES} -eq ${EXPECTED_LINES} ]
+		# then
+		# 	echo -e ${GREEN}"Leaks: [OK]"${NC}
+		# else
+		# 	echo -e ${RED}"Leaks: [KO]"
+		# 	echo -e ${LEAKS_LOG}${NC}
+		# fi
+	fi
+}
+run_five_commands_leaks()
+{
+	if [[ "$LEAKS_TOOL" == "leaks" ]]
+	then
+		leaks --atExit -q -- ${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" "$COMMAND3" "$COMMAND4" "$COMMAND5" ${OUTFILE} 2>${TRASH_LOG} 1> ${LEAKS_LOG}
+		EXPECTED_LINES=4
+		LINES=$(sed -n '$=' ${LEAKS_LOG})
+		if [ ${LINES} -eq ${EXPECTED_LINES} ]
+		then
+			echo -e ${GREEN}"Leaks: [OK]"${NC}
+		else
+			echo -e ${RED}"Leaks: [KO]"
+			echo -e ${LEAKS_LOG}${NC}
+		fi
+	else
+		run_five_commands_leaks_valgrind
+	fi
+}
+
+run_five_commands_leaks_valgrind()
+{
+	if [[ "$LEAKS_TOOL" == "valgrind" ]]
+	then
+		echo "TESTING: " >> ${LEAKS_LOG}
+		echo "${PIPEX}" "${INFILE}" "$COMMAND1" "$COMMAND2" "$COMMAND3" "$COMMAND4" "$COMMAND5" "${OUTFILE}" >> ${LEAKS_LOG}
+		echo "" >> ${LEAKS_LOG}
+		valgrind ${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" "$COMMAND3" "$COMMAND4" "$COMMAND5" ${OUTFILE} 2>>${LEAKS_LOG}
+		echo "" >> ${LEAKS_LOG}
+		# if [ ${LINES} -eq ${EXPECTED_LINES} ]
+		# then
+		# 	echo -e ${GREEN}"Leaks: [OK]"${NC}
+		# else
+		# 	echo -e ${RED}"Leaks: [KO]"
+		# 	echo -e ${LEAKS_LOG}${NC}
+		# fi
+	fi
 }
 
 printf ${HEADER_COLOR}"\n\n----- VALID ALL -----\n"${NC}
@@ -440,6 +494,7 @@ COMMAND3="wc"
 run_three_commands
 check_output
 check_exit_code
+run_three_commands_leaks
 
 COMMAND1="ls -la"
 COMMAND2="grep pipex"
@@ -449,16 +504,23 @@ COMMAND5="wc"
 run_five_commands
 check_output
 check_exit_code
+run_five_commands_leaks
 
 printf ${SUBHEADER_COLOR}"\n- Multiple calls -\n\n"${NC}
 
 COMMAND1="ls -la"
 COMMAND2="grep pipex"
 run_two_commands
+check_output
+check_exit_code
+run_two_commands_leaks
 COMMAND1="wc"
 COMMAND2="tr -d 123"
 COMMAND3="wc"
 run_three_commands
+check_output
+check_exit_code
+run_three_commands_leaks
 COMMAND1="ls -la"
 COMMAND2="grep pipex"
 COMMAND3="wc"
@@ -467,6 +529,7 @@ COMMAND5="wc"
 run_five_commands
 check_output
 check_exit_code
+run_five_commands_leaks
 
 printf ${SUBHEADER_COLOR}"\n- Fails -\n\n"${NC}
 
@@ -476,6 +539,7 @@ COMMAND3="wc"
 run_three_commands
 check_output
 check_exit_code
+run_three_commands_leaks_valgrind
 
 COMMAND1="wc"
 COMMAND2="cat"
@@ -483,6 +547,7 @@ COMMAND3="nocommand"
 run_three_commands
 check_output
 check_exit_code
+run_three_commands_leaks_valgrind
 
 COMMAND1="wc"
 COMMAND2="nocommand"
@@ -490,6 +555,7 @@ COMMAND3="cat"
 run_three_commands
 check_output
 check_exit_code
+run_three_commands_leaks_valgrind
 
 COMMAND1="nocommand"
 COMMAND2="nocommand"
@@ -497,6 +563,7 @@ COMMAND3="cat"
 run_three_commands
 check_output
 check_exit_code
+run_three_commands_leaks_valgrind
 
 COMMAND1="cat"
 COMMAND2="nocommand"
@@ -504,6 +571,7 @@ COMMAND3="nocommand"
 run_three_commands
 check_output
 check_exit_code
+run_three_commands_leaks_valgrind
 
 COMMAND1="nocommand"
 COMMAND2="cat"
@@ -511,6 +579,7 @@ COMMAND3="nocommand"
 run_three_commands
 check_output
 check_exit_code
+run_five_commands_leaks_valgrind
 
 COMMAND1="nocommand"
 COMMAND2="nocommand"
@@ -518,6 +587,7 @@ COMMAND3="nocommand"
 run_three_commands
 check_output
 check_exit_code
+run_five_commands_leaks_valgrind
 
 COMMAND1="wc"
 COMMAND2="wc -l"
@@ -525,6 +595,7 @@ COMMAND3="wc --notrealarg"
 run_three_commands
 check_output
 check_exit_code
+run_five_commands_leaks_valgrind
 
 printf ${HEADER_COLOR}"\n----- BONUS HERE_DOC -----\n\n"${NC}
 
