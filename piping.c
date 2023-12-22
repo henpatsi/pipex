@@ -42,6 +42,7 @@ int	file_to_pipe(int *file_fds, int *pipe_fds, char **command)
 		close(pipe_fds[0]);
 		if (file_fds[0] != -1)
 			run_command(file_fds[0], pipe_fds[1], command);
+		close(pipe_fds[1]);
 		return (-1);
 	}
 	return (process_id);

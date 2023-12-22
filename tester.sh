@@ -14,6 +14,7 @@ VALID_OUTFILE_BASH=${TEST_DIR}valid_outfile_bash
 # ERROR_LOG=${TEST_DIR}error_log
 # ERROR_LOG_BASH=${TEST_DIR}error_log_bash
 
+LEAKS_TOOL="valgrind" # can be leaks or valgrind
 LEAKS_LOG=${TEST_DIR}leaks_log
 TRASH_LOG=${TEST_DIR}trash_log
 
@@ -72,15 +73,53 @@ run_two_commands()
 
 run_two_commands_leaks()
 {
-	leaks --atExit -q -- ${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" ${OUTFILE} 2>${TRASH_LOG} 1> ${LEAKS_LOG}
-	EXPECTED_LINES=4
-	LINES=$(sed -n '$=' ${LEAKS_LOG})
-	if [ ${LINES} -eq ${EXPECTED_LINES} ]
+	if [[ "$LEAKS_TOOL" == "leaks" ]]
 	then
-		echo -e ${GREEN}"Leaks: [OK]"${NC}
-	else
-		echo -e ${RED}"Leaks: [KO]"
-		echo -e ${LEAKS_LOG}${NC}
+		leaks --atExit -q -- ${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" ${OUTFILE} 2>${TRASH_LOG} 1> ${LEAKS_LOG}
+		EXPECTED_LINES=4
+		LINES=$(sed -n '$=' ${LEAKS_LOG})
+		if [ ${LINES} -eq ${EXPECTED_LINES} ]
+		then
+			echo -e ${GREEN}"Leaks: [OK]"${NC}
+		else
+			echo -e ${RED}"Leaks: [KO]"
+			echo -e ${LEAKS_LOG}${NC}
+		fi
+	fi
+
+	if [[ "$LEAKS_TOOL" == "valgrind" ]]
+	then
+		echo "TESTING: " >> ${LEAKS_LOG}
+		echo "${PIPEX}" "${INFILE}" "$COMMAND1" "$COMMAND2" "${OUTFILE}" >> ${LEAKS_LOG}
+		echo "" >> ${LEAKS_LOG}
+		valgrind ${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" ${OUTFILE} 2>>${LEAKS_LOG}
+		echo "" >> ${LEAKS_LOG}
+		# if [ ${LINES} -eq ${EXPECTED_LINES} ]
+		# then
+		# 	echo -e ${GREEN}"Leaks: [OK]"${NC}
+		# else
+		# 	echo -e ${RED}"Leaks: [KO]"
+		# 	echo -e ${LEAKS_LOG}${NC}
+		# fi
+	fi
+}
+
+run_two_commands_leaks_valgrind()
+{
+	if [[ "$LEAKS_TOOL" == "valgrind" ]]
+	then
+		echo "TESTING: " >> ${LEAKS_LOG}
+		echo "${PIPEX}" "${INFILE}" "$COMMAND1" "$COMMAND2" "${OUTFILE}" >> ${LEAKS_LOG}
+		echo "" >> ${LEAKS_LOG}
+		valgrind ${PIPEX} ${INFILE} "$COMMAND1" "$COMMAND2" ${OUTFILE} 2>>${LEAKS_LOG}
+		echo "" >> ${LEAKS_LOG}
+		# if [ ${LINES} -eq ${EXPECTED_LINES} ]
+		# then
+		# 	echo -e ${GREEN}"Leaks: [OK]"${NC}
+		# else
+		# 	echo -e ${RED}"Leaks: [KO]"
+		# 	echo -e ${LEAKS_LOG}${NC}
+		# fi
 	fi
 }
 
@@ -177,24 +216,28 @@ COMMAND2="wc"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks_valgrind
 
 COMMAND1="nocommand"
 COMMAND2="ls ./"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks_valgrind
 
 COMMAND1=""
 COMMAND2="cat"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks_valgrind
 
 COMMAND1=" "
 COMMAND2="cat"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks_valgrind
 
 printf ${SUBHEADER_COLOR}"\n- Second Command -\n\n"${NC}
 
@@ -203,18 +246,21 @@ COMMAND2="nocommand"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks_valgrind
 
 COMMAND1="ls ./"
 COMMAND2="nocommand"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks_valgrind
 
 COMMAND1="cat"
 COMMAND2=""
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks_valgrind
 if [ $EXIT_CODES_MATCH == 0 ]
 then
 	echo -e ${YELLOW}"bash gives 127 exit code in zsh shell!"${NC}
@@ -225,6 +271,7 @@ COMMAND2=" "
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks_valgrind
 if [ $EXIT_CODES_MATCH == 0 ]
 then
 	echo -e ${YELLOW}"bash gives 127 exit code in zsh shell!"${NC}
@@ -237,6 +284,7 @@ COMMAND2="nocommand2"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks_valgrind
 
 printf ${SUBHEADER_COLOR}"\n- Invalid Command Args -\n\n"${NC}
 
@@ -284,6 +332,7 @@ COMMAND2="wc -l"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks_valgrind
 
 INFILE=""
 
@@ -292,6 +341,7 @@ COMMAND2="wc -l"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks_valgrind
 
 printf ${SUBHEADER_COLOR}"\n- Output Write Restricted -\n\n"${NC}
 
@@ -345,12 +395,14 @@ COMMAND2="wc --noargs"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks_valgrind
 
 COMMAND1="wc --noargs"
 COMMAND2="wc"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks_valgrind
 
 printf ${SUBHEADER_COLOR}"\n- Invalid outfile and command -\n\n"${NC}
 
@@ -363,12 +415,14 @@ COMMAND2="wc --noargs"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks_valgrind
 
 COMMAND1="nocommand"
 COMMAND2="wc"
 run_two_commands
 check_output
 check_exit_code
+run_two_commands_leaks_valgrind
 
 
 
