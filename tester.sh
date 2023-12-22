@@ -86,10 +86,17 @@ run_five_commands()
 #	cat ${VALID_OUTFILE}
 }
 
-run_heredoc_commands()
-{
-	${PIPEX} ${INFILE} "" "$COMMAND1" "$COMMAND2" ${OUTFILE}
-}
+# run_heredoc_commands()
+# {
+# 	if [[ "$LEAKS_TOOL" == "leaks" ]]
+# 	then
+# 		leaks --atExit -q -- ${PIPEX} ${INFILE} "stop" "$COMMAND1" "$COMMAND2" ${OUTFILE}
+# 	fi
+# 	if [[ "$LEAKS_TOOL" == "valgrind" ]]
+# 	then
+# 		valgrind ${PIPEX} ${INFILE} "s" "$COMMAND1" "$COMMAND2" ${OUTFILE} 2>>${LEAKS_LOG}
+# 	fi
+# }
 
 run_two_commands_leaks()
 {
@@ -597,12 +604,21 @@ check_output
 check_exit_code
 run_five_commands_leaks_valgrind
 
-printf ${HEADER_COLOR}"\n----- BONUS HERE_DOC -----\n\n"${NC}
 
-INFILE="here_doc"
-OUTFILE=${VALID_OUTFILE}
-OUTFILE_BASH=${VALID_OUTFILE_BASH}
 
-COMMAND1="cat"
-COMMAND2="tr -d 1234567890"
-run_heredoc_commands
+ printf ${HEADER_COLOR}"\n----- BONUS HERE_DOC -----\n\n"${NC}
+
+# INFILE="here_doc"
+# OUTFILE=${VALID_OUTFILE}
+# OUTFILE_BASH=${VALID_OUTFILE_BASH}
+
+# COMMAND1="cat"
+# COMMAND2="tr -d 1234567890"
+# HERE_STR="hello123\na786a8a876aa876a87a69808a0a908a956453434a243a2\nstop"
+# run_heredoc_commands
+
+printf ${SUBHEADER_COLOR}"\n- Not enough args -\n\n"${NC}
+
+echo "${PIPEX} "here_doc" "wc" "cat" ${VALID_OUTFILE}"
+${PIPEX} "here_doc" "wc" "cat" ${VALID_OUTFILE}
+echo ""

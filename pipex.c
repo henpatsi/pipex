@@ -59,7 +59,7 @@ int	main(int argc, char **argv, char *envp[])
 	int		file_fds[2];
 	int		exit_code;
 
-	if (argc < 5)
+	if (argc < 5 || (ft_strcmp(argv[1], "here_doc") == 0 && argc < 6))
 	{
 		errno = EINVAL;
 		perror("not enough arguments");
