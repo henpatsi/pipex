@@ -11,7 +11,7 @@ VALID_OUTFILE=${TEST_DIR}valid_outfile
 INVALID_OUTFILE=${TEST_DIR}invalid_outfile
 VALID_OUTFILE_BASH=${TEST_DIR}valid_outfile_bash
 
-LEAKS_TOOL="valgrind" # can be leaks or valgrind
+LEAKS_TOOL="leaks" # can be leaks or valgrind
 LEAKS_LOG=${TEST_DIR}leaks_log
 TRASH_LOG=${TEST_DIR}trash_log
 rm -f $LEAKS_LOG

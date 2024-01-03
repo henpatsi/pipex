@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 12:57:27 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/21 15:38:21 by hpatsi           ###   ########.fr       */
+/*   Updated: 2024/01/03 10:12:24 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ char	*add_path(char *command, char **paths)
 	int		i;
 
 	i = 0;
+	if (access(command, X_OK) != -1)
+		return (ft_strdup(command));
 	while (paths[i] != 0)
 	{
 		path_command = ft_strjoin(paths[i], command);

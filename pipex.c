@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 08:51:47 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/21 15:38:25 by hpatsi           ###   ########.fr       */
+/*   Updated: 2024/01/03 10:14:41 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	handle_processes(int *file_fds, char ***commands)
 	}
 	exit_code = wait_for_children(process_ids);
 	last_command = *commands[count_commands(commands) - 1];
-	if (last_command != 0 && access(last_command, X_OK) == -1)
+	if (access(last_command, X_OK) == -1)
 		exit_code = 127;
 	free(process_ids);
 	free_commands(commands);
