@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 09:19:48 by hpatsi            #+#    #+#             */
-/*   Updated: 2024/01/03 10:57:08 by hpatsi           ###   ########.fr       */
+/*   Updated: 2024/01/03 11:33:41 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,10 @@ int	write_line(int *pipe_fds, char *read_str)
 	return (1);
 }
 
-int	infile_from_stdin(char **argv, int *file_fds)
+int	read_input(char **argv, int *pipe_fds)
 {
 	char	*read_str;
-	int		pipe_fds[2];
 
-	if (pipe(pipe_fds) < 0)
-	{
-		perror("pipe failed");
-		return (-1);
-	}
 	while (1)
 	{
 		ft_printf("pipe heredoc> ");
@@ -51,6 +45,20 @@ int	infile_from_stdin(char **argv, int *file_fds)
 		free(read_str);
 	}
 	free(read_str);
+	return (1);
+}
+
+int	infile_from_stdin(char **argv, int *file_fds)
+{
+	int		pipe_fds[2];
+
+	if (pipe(pipe_fds) < 0)
+	{
+		perror("pipe failed");
+		return (-1);
+	}
+	if (read_input(argv, pipe_fds) == -1)
+		return (-1);
 	close(pipe_fds[1]);
 	file_fds[0] = pipe_fds[0];
 	return (1);

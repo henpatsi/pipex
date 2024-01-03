@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 12:57:27 by hpatsi            #+#    #+#             */
-/*   Updated: 2024/01/03 11:08:44 by hpatsi           ###   ########.fr       */
+/*   Updated: 2024/01/03 11:10:00 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ char	**create_command(char *command_str, char **paths)
 char	***create_commands(int count, char **comm_strs, char **paths)
 {
 	char	***commands;
-	int	i;
+	int		i;
 
 	commands = ft_calloc((count + 1), sizeof(char **));
 	if (commands == 0)
