@@ -247,6 +247,13 @@ check_output
 check_exit_code
 run_two_commands_leaks
 
+COMMAND1="./test_files/custom_script.sh"
+COMMAND2="cat"
+run_two_commands
+check_output
+check_exit_code
+run_two_commands_leaks
+
 printf ${SUBHEADER_COLOR}"\n- Two calls -\n\n"${NC}
 
 COMMAND1="ls -la"
