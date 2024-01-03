@@ -6,32 +6,11 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 12:57:27 by hpatsi            #+#    #+#             */
-/*   Updated: 2024/01/03 10:12:24 by hpatsi           ###   ########.fr       */
+/*   Updated: 2024/01/03 11:08:44 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-char	**add_slash(char **paths)
-{
-	int		i;
-	char	*tmp;
-
-	i = 0;
-	while (paths[i] != 0)
-	{
-		tmp = ft_strjoin(paths[i], "/");
-		if (tmp == 0)
-		{
-			ft_strsfree(paths);
-			return (0);
-		}
-		free(paths[i]);
-		paths[i] = tmp;
-		i++;
-	}
-	return (paths);
-}
 
 char	**get_paths(char *envp[])
 {
@@ -49,7 +28,7 @@ char	**get_paths(char *envp[])
 			free(path_str);
 			if (paths == 0)
 				return (0);
-			return (add_slash(paths));
+			return (strs_add_str(paths, "/"));
 		}
 		envp++;
 	}
@@ -106,22 +85,15 @@ char	**create_command(char *command_str, char **paths)
 	return (command_arr);
 }
 
-char	***set_commands(int count, char **comm_strs, char *envp[])
+char	***create_commands(int count, char **comm_strs, char **paths)
 {
 	char	***commands;
-	int		i;
-	char	**paths;
+	int	i;
 
 	commands = ft_calloc((count + 1), sizeof(char **));
 	if (commands == 0)
 		return (0);
 	i = 0;
-	paths = get_paths(envp);
-	if (paths == 0)
-	{
-		free_commands(commands);
-		return (0);
-	}
 	while (i < count)
 	{
 		commands[i] = create_command(comm_strs[i], paths);
@@ -133,7 +105,19 @@ char	***set_commands(int count, char **comm_strs, char *envp[])
 		}
 		i++;
 	}
-	ft_strsfree(paths);
 	commands[i] = 0;
+	return (commands);
+}
+
+char	***set_commands(int count, char **comm_strs, char *envp[])
+{
+	char	***commands;
+	char	**paths;
+
+	paths = get_paths(envp);
+	if (paths == 0)
+		return (0);
+	commands = create_commands(count, comm_strs, paths);
+	ft_strsfree(paths);
 	return (commands);
 }

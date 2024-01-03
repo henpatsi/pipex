@@ -6,7 +6,7 @@
 /*   By: hpatsi <hpatsi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 16:17:11 by hpatsi            #+#    #+#             */
-/*   Updated: 2023/12/21 14:52:38 by hpatsi           ###   ########.fr       */
+/*   Updated: 2024/01/03 11:03:22 by hpatsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,25 @@ int	count_commands(char ***commands)
 	while (commands[i] != 0)
 		i++;
 	return (i);
+}
+
+char	**strs_add_str(char **strs, char *str)
+{
+	int		i;
+	char	*tmp;
+
+	i = 0;
+	while (strs[i] != 0)
+	{
+		tmp = ft_strjoin(strs[i], str);
+		if (tmp == 0)
+		{
+			ft_strsfree(strs);
+			return (0);
+		}
+		free(strs[i]);
+		strs[i] = tmp;
+		i++;
+	}
+	return (strs);
 }
