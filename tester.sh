@@ -307,6 +307,13 @@ check_output
 check_exit_code
 run_two_commands_leaks_valgrind
 
+COMMAND1="./test_files/norights_script.sh"
+COMMAND2="cat"
+run_two_commands
+check_output
+check_exit_code
+run_two_commands_leaks_valgrind
+
 printf ${SUBHEADER_COLOR}"\n- Second Command -\n\n"${NC}
 
 COMMAND1="wc"
