@@ -34,7 +34,7 @@ SOURCES = $(addprefix ./type/, ft_isalnum.c ft_isalpha.c ft_isascii.c \
 
 OBJECTS = $(SOURCES:.c=.o)
 
-INCLUDES_DIR = ../
+INCLUDES_DIR = ../includes/
 
 CFLAGS += -Wall -Wextra -Werror -I $(INCLUDES_DIR)
 
